@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<HTML lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Space Thing</title>
+    <script>
+      function Star(x, y, big, supernova){
+        this.x = x;
+        this.y = y;
+        this.big = big;
+        this.supernova = supernova;
+      };
+ 
+      var setUpStarfield = function(){
+        for (i=0; i < 5000; i++){
+          var random_x = Math.floor(Math.random() * 5000);
+          var random_y = Math.floor(Math.random() * 4000);
+          var isBigStar = (Math.random() < 0.5);
+          var isSupernova = (Math.random() < 0.05);
+          var nova = new Star(random_x, random_y, isBigStar, isSupernova);
+          starfield[i] = nova;
+        }
+      };
+     
+      var isInFrame = function(star){
+        if ((star.x > currentFrameX) && (star.x < currentFrameX + 1000) &&
+        (star.y > currentFrameY) && (star.y < currentFrameY + 600)) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      };
+      
+      var drawFrame = function(){
+        var theCanvas = document.getElementById('z');
+        var z = theCanvas.getContext('2d');
+        var starSize = 1;
+        var aStar;
+        z.fillStyle = 'black';
+        z.fillRect(0, 0, 1000, 600);
+
+        for (var key in starfield) {
+          z.fillStyle = 'white';
+          starSize = 1;
+          aStar = starfield[key];
+          if (aStar.big == true) {
+            starSize = 2;
+          }
+          if (aStar.supernova == true){
+            starSize = 4;
+            z.fillStyle = 'red';
+          }
+          if (isInFrame(aStar)){
+            z.fillRect(aStar.x - currentFrameX, aStar.y - currentFrameY, starSize, starSize);
+          }
+        }
+      };
+        // Global code
+        var starfield = {};
+        setUpStarfield();
+        var theCanvas; // hurrah for duck typing
+        var z;
+        var currentFrameX = 0;
+        var currentFrameY = 0;
+        
+        window.onload = function(){
+          theCanvas = document.getElementById('z');
+          z = theCanvas.getContext('2d');
+          theCanvas.style.border = "1px dotted";
+          drawFrame();
+        }; 
+        
+        window.onkeydown = function(event){
+          event = event || window.event;
+          var keycode = event.charCode || event.keyCode;
+          console.log(keycode + " pressed.");
+          switch(keycode){
+            case 37: // left
+            console.log("left");
+              currentFrameX -= 20;
+              drawFrame();
+              break;
+            case 38: // up
+              currentFrameY -= 20;
+              drawFrame();
+              break;
+            case 39: // right
+              currentFrameX += 20;
+              drawFrame();
+              break;
+            case 40: // down
+              currentFrameY += 20;
+              drawFrame();
+              break;
+            default:  
+          }
+        };
+        
+      </script>
+      
+    </head>
+    <body>
+      <canvas id="z" width = "1000" height = "600" />
+    </body>
+  </html>
+        
+
+        
